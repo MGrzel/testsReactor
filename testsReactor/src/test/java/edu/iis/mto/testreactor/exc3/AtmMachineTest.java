@@ -17,6 +17,7 @@ public class AtmMachineTest {
     private BankService bankService;
     private MoneyDepot moneyDepot;
     private AtmMachine atmMachine;
+    private Card card;
 
     @Before
     public void init() {
@@ -25,6 +26,10 @@ public class AtmMachineTest {
         moneyDepot = Mockito.mock(MoneyDepot.class);
 
         atmMachine = new AtmMachine(cardProviderService, bankService, moneyDepot);
+        card = Card.builder()
+                .withCardNumber("test")
+                .withPinNumber(1111)
+                .build();
     }
 
     @Test
@@ -37,11 +42,6 @@ public class AtmMachineTest {
         Money money = Money.builder()
                 .withAmount(10)
                 .withCurrency(Currency.PL)
-                .build();
-
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
                 .build();
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
@@ -57,11 +57,6 @@ public class AtmMachineTest {
                 .withCurrency(Currency.PL)
                 .build();
 
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
-                .build();
-
         atmMachine.withdraw(money, card);
     }
 
@@ -72,11 +67,6 @@ public class AtmMachineTest {
                 .withCurrency(Currency.PL)
                 .build();
 
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
-                .build();
-
         atmMachine.withdraw(money, card);
     }
 
@@ -85,11 +75,6 @@ public class AtmMachineTest {
         Money money = Money.builder()
                 .withAmount(10)
                 .withCurrency(Currency.PL)
-                .build();
-
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
                 .build();
 
         Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
@@ -109,11 +94,6 @@ public class AtmMachineTest {
         Money money = Money.builder()
                 .withAmount(10)
                 .withCurrency(Currency.PL)
-                .build();
-
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
                 .build();
 
         Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
@@ -136,11 +116,6 @@ public class AtmMachineTest {
         Money money = Money.builder()
                 .withAmount(10)
                 .withCurrency(Currency.PL)
-                .build();
-
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
                 .build();
 
         Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
@@ -169,11 +144,6 @@ public class AtmMachineTest {
         Money money = Money.builder()
                 .withAmount(350)
                 .withCurrency(Currency.PL)
-                .build();
-
-        Card card = Card.builder()
-                .withCardNumber("test")
-                .withPinNumber(1111)
                 .build();
 
         Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
