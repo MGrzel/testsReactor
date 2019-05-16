@@ -190,4 +190,30 @@ public class AtmMachineTest {
         Mockito.verify(bankService, Mockito.times(1))
                 .commit(Mockito.any(AuthenticationToken.class));
     }
+
+    @Test
+    public void shouldReturnPaymentWithCorrectCurrencyOfBanknotes() {
+        Money money = Money.builder()
+                .withAmount(250)
+                .withCurrency(Currency.EU)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(true);
+
+        Payment payment = atmMachine.withdraw(money, card);
+
+        for(Banknote banknote : payment.getValue()) {
+            Assert.assertEquals(Currency.EU, banknote.getCurrency());
+        }
+    }
 }
