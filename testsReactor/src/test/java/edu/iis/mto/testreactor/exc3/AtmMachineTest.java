@@ -3,6 +3,7 @@ package edu.iis.mto.testreactor.exc3;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -128,5 +129,38 @@ public class AtmMachineTest {
                 .thenReturn(false);
 
         atmMachine.withdraw(money, card);
+    }
+
+    @Test
+    public void shouldReturnPaymentWithCorrectMoneyAmount() {
+        Money money = Money.builder()
+                .withAmount(10)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Card card = Card.builder()
+                .withCardNumber("test")
+                .withPinNumber(1111)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(true);
+
+        Payment payment = atmMachine.withdraw(money, card);
+        int sum = 0;
+        for(Banknote banknote : payment.getValue()) {
+            sum += banknote.getValue();
+        }
+
+        Assert.assertEquals(10, sum);
     }
 }
