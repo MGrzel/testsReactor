@@ -19,6 +19,7 @@ public class AtmMachineTest {
     private MoneyDepot moneyDepot;
     private AtmMachine atmMachine;
     private Card card;
+    private AuthenticationToken authenticationToken;
 
     @Before
     public void init() {
@@ -30,6 +31,10 @@ public class AtmMachineTest {
         card = Card.builder()
                 .withCardNumber("test")
                 .withPinNumber(1111)
+                .build();
+        authenticationToken = AuthenticationToken.builder()
+                .withAuthorizationCode(1111)
+                .withUserId("1")
                 .build();
     }
 
@@ -82,10 +87,7 @@ public class AtmMachineTest {
                 .thenReturn(false);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         atmMachine.withdraw(money, card);
     }
@@ -101,10 +103,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(false);
@@ -123,10 +122,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(true);
@@ -151,10 +147,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(true);
@@ -176,10 +169,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(true);
@@ -203,10 +193,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(true);
@@ -229,10 +216,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(false);
@@ -257,10 +241,7 @@ public class AtmMachineTest {
                 .thenReturn(true);
 
         Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
-                .thenReturn(Optional.of(AuthenticationToken.builder()
-                        .withAuthorizationCode(1111)
-                        .withUserId("1")
-                        .build()));
+                .thenReturn(Optional.of(authenticationToken));
 
         Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
                 .thenReturn(true);
