@@ -132,7 +132,7 @@ public class AtmMachineTest {
 
         Payment payment = atmMachine.withdraw(money, card);
         int sum = 0;
-        for(Banknote banknote : payment.getValue()) {
+        for (Banknote banknote : payment.getValue()) {
             sum += banknote.getValue();
         }
 
@@ -160,6 +160,34 @@ public class AtmMachineTest {
 
         Payment payment = atmMachine.withdraw(money, card);
 
-        Assert.assertEquals(3, payment.getValue().size());
+        Assert.assertEquals(3, payment.getValue()
+                .size());
+    }
+
+    @Test
+    public void shouldBankServiceCallStartTransactionAndCommitWhenWithdrawalIsSuccessful() {
+        Money money = Money.builder()
+                .withAmount(250)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(true);
+
+        Payment payment = atmMachine.withdraw(money, card);
+
+        Mockito.verify(bankService, Mockito.times(1))
+                .startTransaction(Mockito.any(AuthenticationToken.class));
+        Mockito.verify(bankService, Mockito.times(1))
+                .commit(Mockito.any(AuthenticationToken.class));
     }
 }
