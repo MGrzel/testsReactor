@@ -2,6 +2,7 @@ package edu.iis.mto.testreactor.exc3;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -238,6 +239,7 @@ public class AtmMachineTest {
 
         try {
             atmMachine.withdraw(money, card);
+            fail();
         } catch (Exception ex) {
             Mockito.verify(bankService, Mockito.times(1))
                     .abort(Mockito.any(AuthenticationToken.class));
