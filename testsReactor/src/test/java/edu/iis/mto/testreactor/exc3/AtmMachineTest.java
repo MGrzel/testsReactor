@@ -163,4 +163,33 @@ public class AtmMachineTest {
 
         Assert.assertEquals(10, sum);
     }
+
+    @Test
+    public void shouldReturnPaymentWithCorrectAmountOfBanknotes() {
+        Money money = Money.builder()
+                .withAmount(350)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Card card = Card.builder()
+                .withCardNumber("test")
+                .withPinNumber(1111)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(true);
+
+        Payment payment = atmMachine.withdraw(money, card);
+
+        Assert.assertEquals(3, payment.getValue().size());
+    }
 }
