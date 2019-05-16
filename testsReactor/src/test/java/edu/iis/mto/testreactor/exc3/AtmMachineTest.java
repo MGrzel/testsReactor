@@ -77,4 +77,28 @@ public class AtmMachineTest {
 
         atmMachine.withdraw(money, card);
     }
+
+    @Test(expected = InsufficientFundsException.class)
+    public void shouldThrowInsufficientFundsExceptionWhenChargeReturnsFalse() {
+        Money money = Money.builder()
+                .withAmount(10)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Card card = Card.builder()
+                .withCardNumber("test")
+                .withPinNumber(1111)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(false);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        atmMachine.withdraw(money, card);
+    }
 }
