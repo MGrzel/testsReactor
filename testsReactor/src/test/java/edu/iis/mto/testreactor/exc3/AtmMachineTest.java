@@ -165,7 +165,7 @@ public class AtmMachineTest {
     }
 
     @Test
-    public void shouldBankServiceCallStartTransactionAndCommitWhenWithdrawalIsSuccessful() {
+    public void shouldBankServiceCallStartTransactionAndCommitOnceWhenWithdrawalIsSuccessful() {
         Money money = Money.builder()
                 .withAmount(250)
                 .withCurrency(Currency.PL)
@@ -212,8 +212,35 @@ public class AtmMachineTest {
 
         Payment payment = atmMachine.withdraw(money, card);
 
-        for(Banknote banknote : payment.getValue()) {
+        for (Banknote banknote : payment.getValue()) {
             Assert.assertEquals(Currency.EU, banknote.getCurrency());
+        }
+    }
+
+    @Test
+    public void shouldBankServiceCallAbortOnceWhenMoneyDepotFailToReleaseMoney() {
+        Money money = Money.builder()
+                .withAmount(250)
+                .withCurrency(Currency.EU)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(false);
+
+        try {
+            atmMachine.withdraw(money, card);
+        } catch (Exception ex) {
+            Mockito.verify(bankService, Mockito.times(1))
+                    .abort(Mockito.any(AuthenticationToken.class));
         }
     }
 }
