@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 public class AtmMachineTest {
 
     private CardProviderService cardProviderService;
@@ -26,5 +28,23 @@ public class AtmMachineTest {
     @Test
     public void itCompiles() {
         assertThat(true, equalTo(true));
+    }
+
+    @Test(expected = CardAuthorizationException.class)
+    public void shouldThrowCardAuthorizationExceptionWhenAuthCodeNotPresent() {
+        Money money = Money.builder()
+                .withAmount(10)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Card card = Card.builder()
+                .withCardNumber("test")
+                .withPinNumber(1111)
+                .build();
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.ofNullable(null));
+
+        atmMachine.withdraw(money, card);
     }
 }
