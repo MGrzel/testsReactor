@@ -243,4 +243,32 @@ public class AtmMachineTest {
                     .abort(Mockito.any(AuthenticationToken.class));
         }
     }
+
+    @Test
+    public void shouldReturnPaymentWithCorrectBanknotesValuesInDescendingOrder() {
+        Money money = Money.builder()
+                .withAmount(380)
+                .withCurrency(Currency.PL)
+                .build();
+
+        Mockito.when(bankService.charge(Mockito.any(AuthenticationToken.class), Mockito.any(Money.class)))
+                .thenReturn(true);
+
+        Mockito.when(cardProviderService.authorize(Mockito.any(Card.class)))
+                .thenReturn(Optional.of(AuthenticationToken.builder()
+                        .withAuthorizationCode(1111)
+                        .withUserId("1")
+                        .build()));
+
+        Mockito.when(moneyDepot.releaseBanknotes(Mockito.anyListOf(Banknote.class)))
+                .thenReturn(true);
+
+        List<Banknote> banknotes = atmMachine.withdraw(money, card).getValue();
+
+        Assert.assertEquals(200, banknotes.get(4).getValue());
+        Assert.assertEquals(100, banknotes.get(3).getValue());
+        Assert.assertEquals(50, banknotes.get(2).getValue());
+        Assert.assertEquals(20, banknotes.get(1).getValue());
+        Assert.assertEquals(10, banknotes.get(0).getValue());
+    }
 }
